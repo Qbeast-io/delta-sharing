@@ -66,7 +66,8 @@ case class AddFile(
     partitionValues: Map[String, String],
     size: Long,
     @JsonRawValue
-    stats: String = null) extends Action {
+    stats: String = null,
+    tags: Map[String, String] = Map.empty) extends Action {
 
   override def wrap: SingleAction = SingleAction(file = this)
 }
