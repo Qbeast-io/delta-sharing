@@ -173,6 +173,7 @@ class DeltaSharingService(serverConfig: ServerConfig) {
     val (version, actions) = deltaSharedTableLoader.loadTable(tableConfig).query(
       includeFiles = false,
       Nil,
+      None,
       None)
     streamingOutput(version, actions)
   }
@@ -188,7 +189,8 @@ class DeltaSharingService(serverConfig: ServerConfig) {
     val (version, actions) = deltaSharedTableLoader.loadTable(tableConfig).query(
       includeFiles = true,
       queryTableRequest.predicateHints,
-      queryTableRequest.limitHint)
+      queryTableRequest.limitHint,
+      queryTableRequest.sampleHint)
     streamingOutput(version, actions)
   }
 
