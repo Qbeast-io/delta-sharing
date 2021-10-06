@@ -250,7 +250,7 @@ Header | Authorization: Bearer {token}
 URL | {prefix}/shares/{share}/schemas/{schema}/tables/{table}/query
 URL Parameters | **{share}**: The share name to query. It's case-insensitive.<br>**{schema}**: The schema name to query. It's case-insensitive.<br>**{table}**: The table name to query. It's case-insensitive.
 Request Header | Content-Type: application/json; charset=utf-8
-Request Body | <pre>{<br>  "predicateHints": [<br>    string<br>  ],<br>  "limitHint": int<br>}</pre><br> See [below](#request-body) for more details.
+Request Body | <pre>{<br>  "predicateHints": [<br>    string<br>  ],<br>  "limitHint": int,<br>  "sampleHint": {<br>    "precisionFrom": double,<br>    "precisionTo": double<br>  }<br>}</pre><br> See [below](#request-body) for more details.
 Response Header | Content-Type: [application/x-ndjson](http://ndjson.org/)<br>Delta-Table-Version: {version}<br><br>**{version}** is a long value which represents the current table version.
 Response Body | A sequence of JSON strings delimited by newline. Each line is a JSON object defined in Table Metadata Format. <br><br>The response contains multiple  lines:<br>- The first line is [a JSON wrapper object](#json-wrapper-object-in-each-line) containing the table [Protocol](#protocol) object.<br>- The second line is [a JSON wrapper object](#json-wrapper-object-in-each-line) containing the table [Metadata](#metadata) object.<br>- The rest of the lines are [JSON wrapper objects](#json-wrapper-object-in-each-line) for [files](#file) in the table.
 
@@ -267,6 +267,9 @@ The response body should be a JSON string containing the following two optional 
 
 - **limitHint** (type: Int, optional): an optional limit number. It’s a hint from the client to tell the server how many rows in the table the client plans to read. The server can use this hint to return only some files by using the file stats. For example, when running `SELECT * FROM table LIMIT 1000`, the client can set `limitHint` to `1000`.
   - Applying `limitHint` is **BEST EFFORT**. The server may return files containing more rows than the client requests.
+- **sampleHint** (type: Object, optional)): an optional object which defines the sample precision. Supports two attributes:
+  - `precisionFrom` (type: Double, optional, default `0.0`)): defines the lower bound for the sample precision.
+  - `precisionTo` (type: Double, optional, default `1.0`)): defines the upper bound for the sample precision.
 
 When `predicateHints` and `limitHint` are both present, the server should apply `predicateHints` first then `limitHint`. As these two parameters are hints rather than enforcement, the client must always apply `predicateHints` and `limitHint` on the response returned by the server if it wishes to filter and limit the returned data. An empty JSON object (`{}`) should be provided when these two parameters are missing.
 
@@ -280,7 +283,11 @@ POST {prefix}/shares/vaccine_share/schemas/acme_vaccine_data/tables/vaccine_pati
       "date >= '2021-01-01'",
       "date <= '2021-01-31'"
    ],
-   "limitHint": 1000
+   "limitHint": 1000,
+   "sampleHint": {
+       "precisionFrom": 0.001,
+       "precisionTo": 0.01
+   }
 }
 
 HTTP/2 200 
@@ -289,8 +296,8 @@ delta-table-version: 123
 
 {"protocol":{"minReaderVersion":1}}
 {"metaData":{"id":"f8d5c169-3d01-4ca3-ad9e-7dc3355aedb2","format":{"provider":"parquet"},"schemaString":"{\"type\":\"struct\",\"fields\":[{\"name\":\"eventTime\",\"type\":\"timestamp\",\"nullable\":true,\"metadata\":{}},{\"name\":\"date\",\"type\":\"date\",\"nullable\":true,\"metadata\":{}}]}","partitionColumns":["date"]}}
-{"file":{"url":"https://<s3-bucket-name>.s3.us-west-2.amazonaws.com/delta-exchange-test/table2/date%3D2021-04-28/part-00000-8b0086f2-7b27-4935-ac5a-8ed6215a6640.c000.snappy.parquet?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210501T010516Z&X-Amz-SignedHeaders=host&X-Amz-Expires=900&X-Amz-Credential=AKIAISZRDL4Q4Q7AIONA%2F20210501%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=97b6762cfd8e4d7e94b9d707eff3faf266974f6e7030095c1d4a66350cfd892e","id":"8b0086f2-7b27-4935-ac5a-8ed6215a6640","partitionValues":{"date":"2021-04-28"},"size":573,"stats":"{\"numRecords\":1,\"minValues\":{\"eventTime\":\"2021-04-28T23:33:57.955Z\"},\"maxValues\":{\"eventTime\":\"2021-04-28T23:33:57.955Z\"},\"nullCount\":{\"eventTime\":0}}"}}
-{"file":{"url":"https://<s3-bucket-name>.s3.us-west-2.amazonaws.com/delta-exchange-test/table2/date%3D2021-04-28/part-00000-591723a8-6a27-4240-a90e-57426f4736d2.c000.snappy.parquet?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210501T010516Z&X-Amz-SignedHeaders=host&X-Amz-Expires=899&X-Amz-Credential=AKIAISZRDL4Q4Q7AIONA%2F20210501%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=0f7acecba5df7652457164533a58004936586186c56425d9d53c52db574f6b62","id":"591723a8-6a27-4240-a90e-57426f4736d2","partitionValues":{"date":"2021-04-28"},"size":573,"stats":"{\"numRecords\":1,\"minValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"maxValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"nullCount\":{\"eventTime\":0}}"}}
+{"file":{"url":"https://<s3-bucket-name>.s3.us-west-2.amazonaws.com/delta-exchange-test/table2/date%3D2021-04-28/part-00000-8b0086f2-7b27-4935-ac5a-8ed6215a6640.c000.snappy.parquet?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210501T010516Z&X-Amz-SignedHeaders=host&X-Amz-Expires=900&X-Amz-Credential=AKIAISZRDL4Q4Q7AIONA%2F20210501%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=97b6762cfd8e4d7e94b9d707eff3faf266974f6e7030095c1d4a66350cfd892e","id":"8b0086f2-7b27-4935-ac5a-8ed6215a6640","partitionValues":{"date":"2021-04-28"},"size":573,"stats":"{\"numRecords\":1,\"minValues\":{\"eventTime\":\"2021-04-28T23:33:57.955Z\"},\"maxValues\":{\"eventTime\":\"2021-04-28T23:33:57.955Z\"},\"nullCount\":{\"eventTime\":0}}","tags":{}}}
+{"file":{"url":"https://<s3-bucket-name>.s3.us-west-2.amazonaws.com/delta-exchange-test/table2/date%3D2021-04-28/part-00000-591723a8-6a27-4240-a90e-57426f4736d2.c000.snappy.parquet?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210501T010516Z&X-Amz-SignedHeaders=host&X-Amz-Expires=899&X-Amz-Credential=AKIAISZRDL4Q4Q7AIONA%2F20210501%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=0f7acecba5df7652457164533a58004936586186c56425d9d53c52db574f6b62","id":"591723a8-6a27-4240-a90e-57426f4736d2","partitionValues":{"date":"2021-04-28"},"size":573,"stats":"{\"numRecords\":1,\"minValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"maxValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"nullCount\":{\"eventTime\":0}}","tags":{}}}
 ```
 
 ## Table Metadata Format
@@ -366,6 +373,7 @@ id | String | A unique string for the file in a table. The same file is guarante
 partitionValues | Map<String, String> | A map from partition column to value for this file. See [Partition Value Serialization](#partition-value-serialization) for how to parse the partition values. When the table doesn’t have partition columns, this will be an **empty** map. | Required
 size | Long | The size of this file in bytes. | Required
 stats | String | Contains statistics (e.g., count, min/max values for columns) about the data in this file. This field may be missing. A file may or may not have stats. This is a serialized JSON string which can be deserialized to a [Statistics Struct](#per-file-statistics). A client can decide whether to use stats or drop it. | Optional
+tags | Map<String, String> | A map from custom tag to value for this file. Defines custom tag values used by Qbeast index. When the file doesn’t have custom tags, this will be an **empty** map. | Required
 
 Example (for illustration purposes; each JSON object must be a single line in the response):
 
@@ -379,6 +387,15 @@ Example (for illustration purposes; each JSON object must be a single line in th
          "date" : "2021-04-28"
       },
       "stats" : "{\"numRecords\":1,\"minValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"maxValues\":{\"eventTime\":\"2021-04-28T23:33:48.719Z\"},\"nullCount\":{\"eventTime\":0}}"
+      "tags" : {
+          "state": "FLOODED",
+          "rowCount": "11933",
+          "cube": "Aggggggg",
+          "space": "{\"timestamp\":1633508987423,\"transformations\":[{\"min\":-8998.5,\"max\":26999.5,\"scale\":2.7779321073392966E-5}]}",
+          "minWeight": "-2147483648",
+          "maxWeight": "2147483647",
+          "indexedColumns": "ss_item_sk"
+      }
    }
 }
 ```
