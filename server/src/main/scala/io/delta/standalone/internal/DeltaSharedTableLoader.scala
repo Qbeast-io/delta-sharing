@@ -201,7 +201,7 @@ class DeltaSharedTable(
   private def absolutePath(path: Path, child: String): Path = {
     val p = new Path(new URI(child))
     if (p.isAbsolute) {
-      throw new IllegalStateException("table containing absolute paths cannot be shared")
+      throw new IllegalStateException(s"table containing absolute path '$p' cannot be shared")
     } else {
       new Path(path, p)
     }
