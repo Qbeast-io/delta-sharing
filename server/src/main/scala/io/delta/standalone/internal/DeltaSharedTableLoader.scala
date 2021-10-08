@@ -33,6 +33,7 @@ import org.apache.spark.sql.types.{DataType, MetadataBuilder, StructType}
 
 import io.delta.sharing.server.{model, AbfsFileSigner, S3FileSigner, WasbFileSigner}
 import io.delta.sharing.server.config.{ServerConfig, TableConfig}
+import io.delta.sharing.server.protocol.SampleHint
 
 /**
  * A class to load Delta tables from `TableConfig`. It also caches the loaded tables internally
@@ -127,7 +128,8 @@ class DeltaSharedTable(
   def query(
       includeFiles: Boolean,
       predicateHits: Seq[String],
-      limitHint: Option[Long]): (Long, Seq[model.SingleAction]) = withClassLoader {
+      limitHint: Option[Long],
+      sampleHint: Option[SampleHint]): (Long, Seq[model.SingleAction]) = withClassLoader {
     // TODO Support `limitHint`
     val snapshot = deltaLog.snapshot
     validateDeltaTable(snapshot)
@@ -146,7 +148,7 @@ class DeltaSharedTable(
     val actions = Seq(modelProtocol.wrap, modelMetadata.wrap) ++ {
       if (includeFiles) {
         val selectedFiles = state.activeFiles.values.toSeq
-        val filteredFilters =
+        val filteredFiles =
           if (evaluatePredicateHints && modelMetadata.partitionColumns.nonEmpty) {
             PartitionFilterUtils.evaluatePredicate(
               modelMetadata.schemaString,
@@ -157,14 +159,21 @@ class DeltaSharedTable(
           } else {
             selectedFiles
           }
-        filteredFilters.map { addFile =>
+        val sampleFiles =
+          if (sampleHint.nonEmpty) {
+            Sampler.sample(filteredFiles, sampleHint.get)
+          } else {
+            filteredFiles
+          }
+        sampleFiles.map { addFile =>
           val cloudPath = absolutePath(deltaLog.dataPath, addFile.path)
           val signedUrl = fileSigner.sign(cloudPath)
           val modelAddFile = model.AddFile(url = signedUrl,
             id = Hashing.md5().hashString(addFile.path, UTF_8).toString,
             partitionValues = addFile.partitionValues,
             size = addFile.size,
-            stats = addFile.stats)
+            stats = addFile.stats,
+            tags = addFile.tags)
           modelAddFile.wrap
         }
       } else {
@@ -192,7 +201,7 @@ class DeltaSharedTable(
   private def absolutePath(path: Path, child: String): Path = {
     val p = new Path(new URI(child))
     if (p.isAbsolute) {
-      throw new IllegalStateException("table containing absolute paths cannot be shared")
+      throw new IllegalStateException(s"table containing absolute path '$p' cannot be shared")
     } else {
       new Path(path, p)
     }
