@@ -24,12 +24,13 @@ import javax.annotation.Nullable
 
 import scala.collection.JavaConverters._
 
-import com.linecorp.armeria.common.{HttpData, HttpHeaderNames, HttpHeaders, HttpRequest, HttpResponse, HttpStatus, MediaType, ResponseHeaders, ResponseHeadersBuilder}
+import com.linecorp.armeria.common.{HttpData, HttpHeaderNames, HttpHeaders, HttpMethod, HttpRequest, HttpResponse, HttpStatus, MediaType, ResponseHeaders, ResponseHeadersBuilder}
 import com.linecorp.armeria.common.auth.OAuth2Token
 import com.linecorp.armeria.internal.server.ResponseConversionUtil
 import com.linecorp.armeria.server.{Server, ServiceRequestContext}
 import com.linecorp.armeria.server.annotation.{ConsumesJson, Default, ExceptionHandler, ExceptionHandlerFunction, Get, Head, Param, Post, ProducesJson}
 import com.linecorp.armeria.server.auth.AuthService
+import com.linecorp.armeria.server.cors.CorsService
 import io.delta.standalone.internal.DeltaSharedTableLoader
 import net.sourceforge.argparse4j.ArgumentParsers
 import org.apache.commons.io.FileUtils
@@ -285,6 +286,14 @@ object DeltaSharingService {
   }
 
   def start(serverConfig: ServerConfig): Server = {
+    val corsService =
+      CorsService.builderForAnyOrigin()
+        .allowCredentials()
+        .allowRequestMethods(HttpMethod.POST, HttpMethod.GET)
+        .allowRequestHeaders("allow_request_header")
+        .exposeHeaders("expose_header_1", "expose_header_2")
+        .preflightResponseHeader("x-preflight-cors", "Hello CORS")
+        .newDecorator();
     lazy val server = {
       updateDefaultJsonPrinterForScalaPbConverterUtil()
       val builder = Server.builder()
@@ -292,6 +301,7 @@ object DeltaSharingService {
         .disableDateHeader()
         .disableServerHeader()
         .annotatedService(serverConfig.endpoint, new DeltaSharingService(serverConfig): Any)
+        .decorator(corsService)
       if (serverConfig.ssl == null) {
         builder.http(serverConfig.getPort)
       } else {
