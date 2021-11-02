@@ -286,7 +286,7 @@ object DeltaSharingService {
   }
 
   def start(serverConfig: ServerConfig): Server = {
-    val corsService =
+    lazy val corsService =
       CorsService.builderForAnyOrigin()
         .allowCredentials()
         .allowRequestMethods(HttpMethod.POST, HttpMethod.GET)
