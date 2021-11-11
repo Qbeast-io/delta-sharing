@@ -159,12 +159,15 @@ class DeltaSharedTable(
           } else {
             selectedFiles
           }
-        val sampleFiles =
-          if (sampleHint.nonEmpty) {
-            Sampler.sample(filteredFiles, sampleHint.get)
-          } else {
-            filteredFiles
-          }
+        val (precisionFrom, precisionTo) = sampleHint match {
+          case Some(hint) =>
+            val from = hint.precisionFrom.getOrElse(0.0)
+            var to = hint.precisionTo.getOrElse(1.0)
+            to = math.min(to, tableConfig.precision)
+            (from, to)
+          case None => (0.0, tableConfig.precision)
+        }
+        val sampleFiles = Sampler.sample(filteredFiles, precisionFrom, precisionTo)
         sampleFiles.map { addFile =>
           val cloudPath = absolutePath(deltaLog.dataPath, addFile.path)
           val signedUrl = fileSigner.sign(cloudPath)

@@ -18,22 +18,21 @@ package io.delta.standalone.internal
 
 import io.delta.standalone.internal.actions.AddFile
 
-import io.delta.sharing.server.protocol.SampleHint
-
 /**
- * Sampler filters the data files according the sample hint.
+ * Sampler filters the data files according to the precision range.
  */
 object Sampler {
   /**
-   * Samples given data according to the specified sample hint.
+   * Samples given data according to the specified precision range.
    *
    * @param files the data files
-   * @param hint  the sample hint
+   * @param precisionFrom  the minimum precision
+   * @param precisionTo  the mxiimum precision
    * @return the sample files
    */
-  def sample(files: Seq[AddFile], hint: SampleHint): Seq[AddFile] = {
-    val minSampleWeight = getSampleWeight(hint.precisionFrom)
-    val maxSampleWeight = getSampleWeight(hint.precisionTo)
+  def sample(files: Seq[AddFile], precisionFrom: Double, precisionTo: Double): Seq[AddFile] = {
+    val minSampleWeight = getSampleWeight(precisionFrom)
+    val maxSampleWeight = getSampleWeight(precisionTo)
     files.filter { file =>
       val minFileWeight = getFileWeight(file, "minWeight")
       val maxFileWeight = getFileWeight(file, "maxWeight")
@@ -42,18 +41,14 @@ object Sampler {
     }
   }
 
-  private def getSampleWeight(precision: Option[Double]): Int = {
-    if (precision.isEmpty) {
+  private def getSampleWeight(precision: Double): Int = {
+    if (precision < 0) {
       return Int.MinValue
     }
-    val value = precision.get
-    if (value < 0) {
-      return Int.MinValue
-    }
-    if (value > 1) {
+    if (precision > 1) {
       return Int.MaxValue
     }
-    Int.MinValue + (value * (Int.MaxValue.toDouble - Int.MinValue.toDouble)).toInt
+    Int.MinValue + (precision * (Int.MaxValue.toDouble - Int.MinValue.toDouble)).toInt
   }
 
   private def getFileWeight(file: AddFile, tag: String): Int = {
