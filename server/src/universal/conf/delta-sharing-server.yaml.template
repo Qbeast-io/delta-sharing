@@ -8,8 +8,10 @@ shares:
     tables:
     - name: "table1"
       location: "s3a://<bucket-name>/<the-table-path>"
+      precision: 0.1
     - name: "table2"
       location: "s3a://<bucket-name>/<the-table-path>"
+      precision: 0.2
 - name: "share2"
   schemas:
   - name: "schema2"

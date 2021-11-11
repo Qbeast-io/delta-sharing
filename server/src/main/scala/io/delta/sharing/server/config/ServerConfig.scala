@@ -214,10 +214,11 @@ case class SchemaConfig(
 
 case class TableConfig(
     @BeanProperty var name: String,
-    @BeanProperty var location: String) extends ConfigItem {
+    @BeanProperty var location: String,
+    @BeanProperty var precision: Double) extends ConfigItem {
 
   def this() {
-    this(null, null)
+    this(null, null, 1.0)
   }
 
   override def checkConfig(): Unit = {
@@ -226,6 +227,9 @@ case class TableConfig(
     }
     if (location == null) {
       throw new IllegalArgumentException("'location' in a table must be provided")
+    }
+    if (precision < 0.0 || precision > 1.0) {
+      throw new IllegalArgumentException("'precision' in a table must be in [0.0, 1,0]")
     }
   }
 }

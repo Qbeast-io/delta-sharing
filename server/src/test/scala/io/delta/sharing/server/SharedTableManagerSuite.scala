@@ -104,9 +104,9 @@ class SharedTableManagerSuite extends FunSuite {
           SchemaConfig(
             "schema1",
             Arrays.asList(
-              TableConfig("table1", "location1"),
-              TableConfig("table2", "location1"),
-              TableConfig("table3", "location2")
+              TableConfig("table1", "location1", 1.0),
+              TableConfig("table2", "location1", 1.0),
+              TableConfig("table3", "location2", 1.0)
             )
           )
         )
@@ -137,14 +137,14 @@ class SharedTableManagerSuite extends FunSuite {
           SchemaConfig(
             "schema1",
             Arrays.asList(
-              TableConfig("table1", "location1"),
-              TableConfig("table2", "location1")
+              TableConfig("table1", "location1", 1.0),
+              TableConfig("table2", "location1", 1.0)
             )
           ),
           SchemaConfig(
             "schema2",
             Arrays.asList(
-              TableConfig("table3", "location1")
+              TableConfig("table3", "location1", 1.0)
             )
           )
         )
@@ -172,7 +172,7 @@ class SharedTableManagerSuite extends FunSuite {
           SchemaConfig(
             "schema1",
             Arrays.asList(
-              TableConfig("table1", "location1")
+              TableConfig("table1", "location1", 1.0)
             )
           )
         )
@@ -180,7 +180,7 @@ class SharedTableManagerSuite extends FunSuite {
     )
     val sharedTableManager = new SharedTableManager(serverConfig)
     val table = sharedTableManager.getTable("share1", "schema1", "table1")
-    assert(table == TableConfig("table1", "location1"))
+    assert(table == TableConfig("table1", "location1", 1.0))
 
     assert(intercept[DeltaSharingNoSuchElementException] {
       sharedTableManager.getTable("share2", "schema1", "table1")
@@ -219,7 +219,7 @@ class SharedTableManagerSuite extends FunSuite {
           SchemaConfig(
             "schema1",
             Arrays.asList(
-              TableConfig("table1", "location1")
+              TableConfig("table1", "location1", 1.0)
             )
           )
         )
