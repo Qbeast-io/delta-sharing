@@ -53,24 +53,24 @@ class ServerConfigSuite extends FunSuite {
       val sharesInTemplate = Arrays.asList(
         ShareConfig("share1", Arrays.asList(
           SchemaConfig("schema1", Arrays.asList(
-            TableConfig("table1", "s3a://<bucket-name>/<the-table-path>"),
+            TableConfig("table1", "s3a://<bucket-name>/<the-table-path>", 0.1),
             TableConfig(
               "table2",
-              "wasbs://<container-name>@<account-name}.blob.core.windows.net/<the-table-path>")
+              "wasbs://<container-name>@<account-name}.blob.core.windows.net/<the-table-path>", 0.2)
           ))
         )),
         ShareConfig("share2", Arrays.asList(
           SchemaConfig("schema2", Arrays.asList(
             TableConfig(
               "table3",
-              "abfss://<container-name>@<account-name}.dfs.core.windows.net/<the-table-path>")
+              "abfss://<container-name>@<account-name}.dfs.core.windows.net/<the-table-path>", 1.0)
           ))
         )),
         ShareConfig("share3", Arrays.asList(
           SchemaConfig("schema3", Arrays.asList(
             TableConfig(
               "table4",
-              "gs://<bucket-name>/<the-table-path>")
+              "gs://<bucket-name>/<the-table-path>", 1.0)
           ))
         ))
       )
@@ -190,6 +190,14 @@ class ServerConfigSuite extends FunSuite {
     assertInvalidConfig("'location' in a table must be provided") {
       val t = new TableConfig()
       t.setName("name")
+      t.checkConfig()
+    }
+    assertInvalidConfig("'precision' in a table must be in [0.0, 1,0]") {
+      val t = new TableConfig("name", "location", -0.1)
+      t.checkConfig()
+    }
+    assertInvalidConfig("'precision' in a table must be in [0.0, 1,0]") {
+      val t = new TableConfig("name", "location", 1.1)
       t.checkConfig()
     }
   }

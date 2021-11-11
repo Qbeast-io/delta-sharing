@@ -67,9 +67,9 @@ object TestResource {
           SchemaConfig(
             "default",
             java.util.Arrays.asList(
-              TableConfig("table1", s"s3a://${AWS.bucket}/delta-exchange-test/table1"),
-              TableConfig("table3", s"s3a://${AWS.bucket}/delta-exchange-test/table3"),
-              TableConfig("table7", s"s3a://${AWS.bucket}/delta-exchange-test/table7")
+              TableConfig("table1", s"s3a://${AWS.bucket}/delta-exchange-test/table1", 1.0),
+              TableConfig("table3", s"s3a://${AWS.bucket}/delta-exchange-test/table3", 1.0),
+              TableConfig("table7", s"s3a://${AWS.bucket}/delta-exchange-test/table7", 1.0)
             )
           )
         )
@@ -77,7 +77,7 @@ object TestResource {
       ShareConfig("share2",
         java.util.Arrays.asList(
           SchemaConfig("default", java.util.Arrays.asList(
-            TableConfig("table2", s"s3a://${AWS.bucket}/delta-exchange-test/table2")
+            TableConfig("table2", s"s3a://${AWS.bucket}/delta-exchange-test/table2", 1.0)
           )
           )
         )),
@@ -86,8 +86,8 @@ object TestResource {
           SchemaConfig(
             "default",
             java.util.Arrays.asList(
-              TableConfig("table4", s"s3a://${AWS.bucket}/delta-exchange-test/table4"),
-              TableConfig("table5", s"s3a://${AWS.bucket}/delta-exchange-test/table5")
+              TableConfig("table4", s"s3a://${AWS.bucket}/delta-exchange-test/table4", 1.0),
+              TableConfig("table5", s"s3a://${AWS.bucket}/delta-exchange-test/table5", 1.0)
             )
           )
         )
@@ -98,7 +98,7 @@ object TestResource {
             "default",
             java.util.Arrays.asList(
               // table made with spark.sql.parquet.compression.codec=gzip
-              TableConfig("test_gzip", s"s3a://${AWS.bucket}/compress-test/table1")
+              TableConfig("test_gzip", s"s3a://${AWS.bucket}/compress-test/table1", 1.0)
             )
           )
         )
@@ -119,13 +119,13 @@ object TestResource {
           SchemaConfig(
             "schema1",
             java.util.Arrays.asList(
-              TableConfig("table8", s"s3a://${AWS.bucket}/delta-exchange-test/table8")
+              TableConfig("table8", s"s3a://${AWS.bucket}/delta-exchange-test/table8", 1.0)
             )
           ),
           SchemaConfig(
             "schema2",
             java.util.Arrays.asList(
-              TableConfig("table9", s"s3a://${AWS.bucket}/delta-exchange-test/table9")
+              TableConfig("table9", s"s3a://${AWS.bucket}/delta-exchange-test/table9", 1.0)
             )
           )
         )
@@ -136,8 +136,8 @@ object TestResource {
           SchemaConfig(
             "default",
             java.util.Arrays.asList(
-              TableConfig("table_wasb", s"wasbs://${Azure.container}@${Azure.accountName}.blob.core.windows.net/delta-sharing-test/table1"),
-              TableConfig("table_abfs", s"abfss://${Azure.container}@${Azure.accountName}.dfs.core.windows.net/delta-sharing-test/table1")
+              TableConfig("table_wasb", s"wasbs://${Azure.container}@${Azure.accountName}.blob.core.windows.net/delta-sharing-test/table1", 1.0),
+              TableConfig("table_abfs", s"abfss://${Azure.container}@${Azure.accountName}.dfs.core.windows.net/delta-sharing-test/table1", 1.0)
             )
           )
         )
@@ -148,7 +148,7 @@ object TestResource {
           SchemaConfig(
             "default",
             java.util.Arrays.asList(
-              TableConfig("table_gcs", s"gs://${GCP.bucket}/delta-sharing-test/table1")
+              TableConfig("table_gcs", s"gs://${GCP.bucket}/delta-sharing-test/table1", 1.0)
             )
           )
         )
