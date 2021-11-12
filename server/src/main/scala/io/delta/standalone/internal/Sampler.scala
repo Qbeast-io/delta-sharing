@@ -31,6 +31,9 @@ object Sampler {
    * @return the sample files
    */
   def sample(files: Seq[AddFile], precisionFrom: Double, precisionTo: Double): Seq[AddFile] = {
+    if (precisionFrom > precisionTo) {
+      return Seq.empty
+    }
     val minSampleWeight = getSampleWeight(precisionFrom)
     val maxSampleWeight = getSampleWeight(precisionTo)
     files.filter { file =>
