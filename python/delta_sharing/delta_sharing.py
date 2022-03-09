@@ -49,7 +49,7 @@ def _parse_url(url: str) -> Tuple[str, str, str, str]:
     return (profile, share, schema, table)
 
 
-def load_as_pandas(url: str, limit: Optional[int] = None) -> pd.DataFrame:
+def load_as_pandas(url: str, limit: Optional[int] = None, sampleFraction: Optional[float] = None) -> pd.DataFrame:
     """
     Load the shared table using the give url as a pandas DataFrame.
 
@@ -65,6 +65,7 @@ def load_as_pandas(url: str, limit: Optional[int] = None) -> pd.DataFrame:
         table=Table(name=table, share=share, schema=schema),
         rest_client=DataSharingRestClient(profile),
         limit=limit,
+        sampleFraction=sampleFraction,
     ).to_pandas()
 
 
