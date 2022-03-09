@@ -69,7 +69,6 @@ class DeltaSharingReader:
         response = self._rest_client.list_files_in_table(
             self._table, predicateHints=self._predicateHints, limitHint=self._limit, sampleFraction=self._sampleFraction
         )
-        print(len(response.add_files))
 
         schema_json = loads(response.metadata.schema_string)
 
