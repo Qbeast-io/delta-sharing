@@ -244,15 +244,15 @@ class DataSharingRestClient:
         *,
         predicateHints: Optional[Sequence[str]] = None,
         limitHint: Optional[int] = None,
-        sampleFraction: Optional[float] = None,
+        sampleHint: Optional[float] = None,
     ) -> ListFilesInTableResponse:
         data: Dict = {}
         if predicateHints is not None:
             data["predicateHints"] = predicateHints
         if limitHint is not None:
             data["limitHint"] = limitHint
-        if sampleFraction is not None:
-            data["sampleFraction"] = {"precisionFrom": 0.0, "precisionTo": sampleFraction}
+        if sampleHint is not None:
+            data["sampleHint"] = {"precisionFrom": 0.0, "precisionTo": sampleHint}
 
         with self._post_internal(
             f"/shares/{table.share}/schemas/{table.schema}/tables/{table.name}/query",

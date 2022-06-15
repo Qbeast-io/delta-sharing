@@ -34,7 +34,7 @@ class DeltaSharingReader:
         *,
         predicateHints: Optional[Sequence[str]] = None,
         limit: Optional[int] = None,
-        sampleFraction: Optional[float] = None,
+        sampleHint: Optional[float] = None,
     ):
         self._table = table
         self._rest_client = rest_client
@@ -48,26 +48,26 @@ class DeltaSharingReader:
             assert isinstance(limit, int) and limit >= 0, "'limit' must be a non-negative int"
         self._limit = limit
 
-        if sampleFraction is not None:
-            assert isinstance(sampleFraction, float) and sampleFraction >= 0.0 and sampleFraction <= 1.0, "'sampleFraction' must be between 0.0 and 1.0"
-        self._sampleFraction = sampleFraction
+        if sampleHint is not None:
+            assert isinstance(sampleHint, float) and sampleHint >= 0.0 and sampleHint <= 1.0, "'sampleHint' must be between 0.0 and 1.0"
+        self._sampleHint = sampleHint
 
     @property
     def table(self) -> Table:
         return self._table
 
     def predicateHints(self, predicateHints: Optional[Sequence[str]]) -> "DeltaSharingReader":
-        return self._copy(predicateHints=predicateHints, limit=self._limit, sampleFraction=self._sampleFraction)
+        return self._copy(predicateHints=predicateHints, limit=self._limit, sampleHint=self._sampleHint)
 
     def limit(self, limit: Optional[int]) -> "DeltaSharingReader":
-        return self._copy(predicateHints=self._predicateHints, limit=limit, sampleFraction=self._sampleFraction)
+        return self._copy(predicateHints=self._predicateHints, limit=limit, sampleHint=self._sampleHint)
 
-    def sample(self, sampleFraction: Optional[float]) -> "DeltaSharingReader":
-        return self._copy(predicateHints=self._predicateHints, limit=self._limit, sampleFraction=sampleFraction)
+    def sample(self, sampleHint: Optional[float]) -> "DeltaSharingReader":
+        return self._copy(predicateHints=self._predicateHints, limit=self._limit, sampleHint=sampleHint)
 
     def to_pandas(self) -> pd.DataFrame:
         response = self._rest_client.list_files_in_table(
-            self._table, predicateHints=self._predicateHints, limitHint=self._limit, sampleFraction=self._sampleFraction
+            self._table, predicateHints=self._predicateHints, limitHint=self._limit, sampleHint=self._sampleHint
         )
 
         schema_json = loads(response.metadata.schema_string)
@@ -102,14 +102,14 @@ class DeltaSharingReader:
         )[[field["name"] for field in schema_json["fields"]]]
 
     def _copy(
-        self, *, predicateHints: Optional[Sequence[str]], limit: Optional[int], sampleFraction: Optional[float]
+        self, *, predicateHints: Optional[Sequence[str]], limit: Optional[int], sampleHint: Optional[float]
     ) -> "DeltaSharingReader":
         return DeltaSharingReader(
             table=self._table,
             rest_client=self._rest_client,
             predicateHints=predicateHints,
             limit=limit,
-            sampleFraction=sampleFraction,
+            sampleHint=sampleHint,
         )
 
     @staticmethod
