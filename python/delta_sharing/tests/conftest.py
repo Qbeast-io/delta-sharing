@@ -22,9 +22,9 @@ from typing import Iterator, Optional
 import pytest
 from pytest import TempPathFactory
 
-from delta_sharing.delta_sharing import SharingClient
-from delta_sharing.protocol import DeltaSharingProfile
-from delta_sharing.rest_client import DataSharingRestClient
+from qbeast_sharing.delta_sharing import SharingClient
+from qbeast_sharing.protocol import DeltaSharingProfile
+from qbeast_sharing.rest_client import DataSharingRestClient
 
 
 ENABLE_INTEGRATION = len(os.environ.get("AWS_ACCESS_KEY_ID", "")) > 0

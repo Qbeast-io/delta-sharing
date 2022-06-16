@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from delta_sharing.delta_sharing import SharingClient, load_as_pandas, load_as_spark
-from delta_sharing.protocol import Share, Schema, Table
-from delta_sharing.version import __version__
+from qbeast_sharing.delta_sharing import SharingClient, load_as_pandas, load_as_spark
+from qbeast_sharing.protocol import Share, Schema, Table
+from qbeast_sharing.version import __version__
 
 
 __all__ = [

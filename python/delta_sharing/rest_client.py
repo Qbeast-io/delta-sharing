@@ -26,7 +26,7 @@ from datetime import datetime
 import requests
 from requests.exceptions import HTTPError, ConnectionError
 
-from delta_sharing.protocol import (
+from qbeast_sharing.protocol import (
     AddFile,
     DeltaSharingProfile,
     Metadata,
@@ -105,7 +105,7 @@ def retry_with_exponential_backoff(func):
 
 def _client_user_agent() -> str:
     try:
-        from delta_sharing.version import __version__
+        from qbeast_sharing.version import __version__
         import pandas
         import pyarrow
         import platform

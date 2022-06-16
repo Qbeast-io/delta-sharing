@@ -18,7 +18,7 @@ import pytest
 from requests.models import Response
 from requests.exceptions import HTTPError, ConnectionError
 
-from delta_sharing.protocol import (
+from qbeast_sharing.protocol import (
     AddFile,
     Format,
     Metadata,
@@ -27,11 +27,11 @@ from delta_sharing.protocol import (
     Share,
     Table,
 )
-from delta_sharing.rest_client import (
+from qbeast_sharing.rest_client import (
     DataSharingRestClient,
     retry_with_exponential_backoff,
 )
-from delta_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
+from qbeast_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
 
 
 def test_retry(rest_client: DataSharingRestClient):

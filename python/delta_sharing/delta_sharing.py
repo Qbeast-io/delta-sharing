@@ -24,9 +24,9 @@ try:
 except ImportError:
     pass
 
-from delta_sharing.protocol import DeltaSharingProfile, Schema, Share, Table
-from delta_sharing.reader import DeltaSharingReader
-from delta_sharing.rest_client import DataSharingRestClient
+from qbeast_sharing.protocol import DeltaSharingProfile, Schema, Share, Table
+from qbeast_sharing.reader import DeltaSharingReader
+from qbeast_sharing.rest_client import DataSharingRestClient
 
 from requests.exceptions import HTTPError
 

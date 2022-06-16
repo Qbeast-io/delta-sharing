@@ -20,10 +20,10 @@ from typing import Optional, Sequence
 
 import pandas as pd
 
-from delta_sharing.protocol import AddFile, Metadata, Table
-from delta_sharing.reader import DeltaSharingReader
-from delta_sharing.rest_client import ListFilesInTableResponse, DataSharingRestClient
-from delta_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
+from qbeast_sharing.protocol import AddFile, Metadata, Table
+from qbeast_sharing.reader import DeltaSharingReader
+from qbeast_sharing.rest_client import ListFilesInTableResponse, DataSharingRestClient
+from qbeast_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
 
 
 def test_to_pandas_non_partitioned(tmp_path):

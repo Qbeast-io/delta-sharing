@@ -27,7 +27,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     LONG_DESCRIPTION = f.read()
 
 try:
-    exec(open('delta_sharing/version.py').read())
+    exec(open('qbeast_sharing/version.py').read())
 except IOError:
     print("Failed to load Delta Sharing version file for packaging.",
           file=sys.stderr)
@@ -35,10 +35,10 @@ except IOError:
 VERSION = __version__  # noqa
 
 setup(
-    name='delta-sharing',
+    name='qbeast-sharing',
     version=VERSION,
     packages=[
-        'delta_sharing',
+        'qbeast_sharing',
     ],
     python_requires='>=3.7',
     install_requires=[
@@ -57,17 +57,17 @@ setup(
         'gcs': ['gcsfs'],
         'gs': ['gcsfs'],
     },
-    author="The Delta Lake Project Authors",
-    author_email="delta-users@googlegroups.com",
+    author="The Delta Lake Project Authors and Qbeast Team",
+    author_email="users@qbeast.io",
     license="Apache-2.0",
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    url="https://github.com/delta-io/delta-sharing/",
+    url="https://github.com/Qbeast-io/qbeast-sharing",
     project_urls={
-        'Source': 'https://github.com/delta-io/delta-sharing',
-        'Documentation': 'https://github.com/delta-io/delta-sharing',
-        'Issues': 'https://github.com/delta-io/delta-sharing/issues'
+        'Source': 'https://github.com/Qbeast-io/qbeast-sharing',
+        'Documentation': 'https://github.com/Qbeast-io/qbeast-sharing',
+        'Issues': 'https://github.com/Qbeast-io/qbeast-sharing/issues'
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",

@@ -17,7 +17,7 @@ import io
 
 import pytest
 
-from delta_sharing.protocol import (
+from qbeast_sharing.protocol import (
     AddFile,
     DeltaSharingProfile,
     Format,

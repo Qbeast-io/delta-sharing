@@ -19,20 +19,20 @@ from typing import Optional, Sequence
 import pandas as pd
 import pytest
 
-from delta_sharing.delta_sharing import (
+from qbeast_sharing.delta_sharing import (
     DeltaSharingProfile,
     SharingClient,
     load_as_pandas,
     load_as_spark,
     _parse_url,
 )
-from delta_sharing.protocol import Schema, Share, Table
-from delta_sharing.rest_client import (
+from qbeast_sharing.protocol import Schema, Share, Table
+from qbeast_sharing.rest_client import (
     DataSharingRestClient,
     ListAllTablesResponse,
     retry_with_exponential_backoff,
 )
-from delta_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
+from qbeast_sharing.tests.conftest import ENABLE_INTEGRATION, SKIP_MESSAGE
 
 from requests.models import Response
 from requests.exceptions import HTTPError

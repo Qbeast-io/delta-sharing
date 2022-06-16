@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from delta_sharing.converter import to_converter
+from qbeast_sharing.converter import to_converter
 
 
 def test_to_converter_boolean():
